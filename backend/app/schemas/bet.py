@@ -16,7 +16,8 @@ class BetBase(BaseModel):
     stake: Decimal = Field(gt=0)
 
 class BetCreate(BetBase):
-    pass
+    status: BetStatus = BetStatus.PENDING
+    created_at: datetime | None = None
 
 class BetOut(BetBase):
     id: int
