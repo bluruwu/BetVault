@@ -100,7 +100,7 @@ export default function BetForm({
       <div>
         <label>Selection details (opcional)</label>
         <input
-          {...register("selection_details")}
+          {...register("selection_details", { setValueAs: v => v === "" ? null : v })}
           placeholder="Ej: 1st half / corners / etc."
         />
         {errors.selection_details && (
@@ -114,7 +114,7 @@ export default function BetForm({
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
         <div>
           <label>Line (opcional)</label>
-          <input type="number" step="0.01" {...register("line")} placeholder="Ej: -0.5" />
+          <input type="number" step="0.01" {...register("line", {setValueAs: v => v === "" ? null : Number(v)})} placeholder="Ej: -0.5" />
           {errors.line && (
             <small style={{ color: "crimson" }}>{errors.line.message}</small>
           )}
@@ -122,15 +122,15 @@ export default function BetForm({
 
         <div>
           <label>Odds</label>
-          <input type="number" step="0.0001" {...register("odds")} placeholder="Ej: 1.8500" />
+          <input type="number" step="0.0001" {...register("odds", { valueAsNumber: true })} placeholder="Ej: 1.8500" />
           {errors.odds && (
-            <small style={{ color: "crimson" }}>{errors.odds.message}</small>
+            <small style={{ color: "crimson"}}>{errors.odds.message}</small>
           )}
         </div>
 
         <div>
           <label>Stake</label>
-          <input type="number" step="0.01" {...register("stake")} placeholder="Ej: 10.00" />
+          <input type="number" step="0.01" {...register("stake", { valueAsNumber: true })} placeholder="Ej: 10.00" />
           {errors.stake && (
             <small style={{ color: "crimson" }}>{errors.stake.message}</small>
           )}
@@ -155,7 +155,7 @@ export default function BetForm({
         <div>
           <label>Created at (opcional, ISO)</label>
           <input
-            {...register("created_at")}
+            {...register("created_at", { setValueAs: v => v === "" ? undefined : v })}
             placeholder="Ej: 2026-01-18T10:00:00Z"
           />
           {errors.created_at && (

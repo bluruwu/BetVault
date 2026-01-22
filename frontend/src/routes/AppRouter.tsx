@@ -1,9 +1,11 @@
 import { createBrowserRouter, RouterProvider} from "react-router-dom";
+import BetsListPage from "../pages/BetsListPage";
+import NewBetPage from "../pages/NewBetPage";
 
 const router = createBrowserRouter([
-    {path: "/", element: None},
-    {path: "/bets", element: None},
-    {path: "/bets/new", element: None},
+  { path: "/", element: <BetsListPage /> },
+  { path: "/bets", element: <BetsListPage /> },
+  { path: "/bets/new", element: <NewBetPage /> },
 ]);
 
 export default function AppRouter(){

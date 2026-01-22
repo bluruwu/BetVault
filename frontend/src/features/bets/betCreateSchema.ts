@@ -16,24 +16,17 @@ export const betCreateSchema = z.object({
     ]),
 
     target_scope: z
-        .enum(["MATCH", "HOME_TEAM", "AWAY_TEAM"])
-        .default("MATCH"),
+        .enum(["MATCH", "HOME_TEAM", "AWAY_TEAM"]),
 
     selection: z.string().min(1).max(120),
     selection_details: z.string().nullish(),
 
-    odds: z.coerce.number().gt(1.0, "Odds must be > 1.0"),
+    odds: z.number().gt(1.0, "Odds must be > 1.0"),
+    line: z.number().nullable().optional(),
 
-    line: z
-    .union([z.coerce.number(), z.nan()])
-    .optional()
-    .transform((v) => (typeof v === "number" && !Number.isNaN(v) ? v : null))
-    .default(null),
-
-    stake: z.coerce.number().gt(0, "Stake must be > 0"),
-
-    status: z.enum(["PENDING", "WON", "LOST", "VOID"]).default("PENDING"),
-    created_at: z.string().optional(),
+    stake: z.number().gt(0, "Stake must be > 0"),
+    status: z.enum(["PENDING", "WON", "LOST", "VOID"]),
+    created_at: z.iso.datetime({ offset: true }).optional(),
 
 });
 

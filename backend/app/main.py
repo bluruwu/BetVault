@@ -4,7 +4,7 @@ from app.api.router import api_router
 app = FastAPI(title="BetVault API", version="0.1.0")
 
 origins = [
-    "http://localhost:5174",
+    "http://localhost:5174","http://localhost:5173"
 ]
 app.add_middleware(
     CORSMiddleware,
