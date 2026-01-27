@@ -29,7 +29,7 @@ export default function BetsListPage() {
     <div className="min-h-screen bg-gray-900 p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
 
-        {/* Header de la página */}
+        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold text-white tracking-tight">My Bets</h1>
@@ -56,7 +56,7 @@ export default function BetsListPage() {
           </div>
         )}
 
-        {/* Grid de Apuestas */}
+        {/* Bets Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {bets?.map((bet) => (
             <BetCard key={bet.id} bet={bet} />

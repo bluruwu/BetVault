@@ -1,7 +1,6 @@
 import type { BetOut, BetStatus } from "./types";
 import {formatDate} from "../../utils/date.ts";
 
-// Mapa de colores según el estado
 const statusColors: Record<BetStatus, string> = {
   PENDING: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
   WON: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
@@ -18,7 +17,7 @@ export default function BetCard({ bet }: Props) {
 
   return (
     <div className="flex flex-col rounded-xl bg-gray-800 border border-gray-700 shadow-lg overflow-hidden hover:border-gray-600 transition-colors group">
-      {/* Header: Fecha y Estado */}
+      {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-gray-900/50 border-b border-gray-700">
         <span className="text-xs font-medium text-gray-400">
           {formatDate(bet.created_at)}
@@ -32,7 +31,7 @@ export default function BetCard({ bet }: Props) {
         </span>
       </div>
 
-      {/* Body: Equipos y Selección */}
+      {/* Body */}
       <div className="p-4 flex-1">
         <div className="flex justify-between items-start mb-2">
             <h3 className="text-lg font-bold text-white leading-tight">
@@ -62,7 +61,7 @@ export default function BetCard({ bet }: Props) {
         </div>
       </div>
 
-      {/* Footer: Stats (Odds, Stake, Profit) */}
+      {/* Footer*/}
       <div className="grid grid-cols-3 border-t border-gray-700 bg-gray-800/50">
         <div className="p-3 text-center border-r border-gray-700">
             <span className="block text-xs text-gray-500 uppercase">Odds</span>
