@@ -6,6 +6,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from app.db.session import get_db
 from app.models.bet import Bet, BetStatus
 from app.schemas.bet import BetCreate, BetOut
+from app.utils.utils import serialize_bet
 
 router = APIRouter(prefix="/bets", tags=["bets"])
 
@@ -33,9 +34,10 @@ def create_bet(payload: BetCreate, db: Session = Depends(get_db)):
     db.add(bet)
     db.commit()
     db.refresh(bet)
-    return bet
+    return serialize_bet(bet)
 
 @router.get("", response_model=list[BetOut])
 def list_bets(db: Session = Depends(get_db)):
-    return db.scalars(select(Bet).order_by(Bet.created_at.desc())).all()
+    bets = db.scalars(select(Bet).order_by(Bet.created_at.desc())).all()
+    return [serialize_bet(b) for b in bets]
 
