@@ -1,5 +1,3 @@
-export type DecimalLike = number | string;
-
 export type BetStatus = "PENDING" | "WON" | "LOST" | "VOID";
 
 export type MarketType =
@@ -21,9 +19,9 @@ export interface BetBase {
     target_scope: TargetScope; // default MATCH en backend
     selection: string;
     selection_details: string | null;
-    odds: DecimalLike;
-    line: DecimalLike | null;
-    stake: DecimalLike;
+    odds: number;
+    line: number | null;
+    stake: number;
 }
 
 export interface BetCreate extends Omit<BetBase, "target_scope"> {
@@ -35,8 +33,8 @@ export interface BetCreate extends Omit<BetBase, "target_scope"> {
 export interface BetOut extends BetBase {
     id: number;
     status: BetStatus;
-    potential_payout: DecimalLike;
-    net_profit: DecimalLike | null;
+    potential_payout: number;
+    net_profit: number | null;
     created_at: string;
     updated_at: string;
 }

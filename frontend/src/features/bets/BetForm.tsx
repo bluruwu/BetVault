@@ -36,7 +36,7 @@ export default function BetForm({
       market_type: "MATCH_RESULT",
       line: null,
       selection_details: null,
-      odds: 1.0, // Default start
+      odds: 1.0,
     },
   });
 
@@ -188,7 +188,6 @@ export default function BetForm({
               min="0"
               {...register("stake", { valueAsNumber: true })}
               placeholder="10.00"
-              // Applied noSpinnerClasses here
               className={`${inputClasses} ${noSpinnerClasses} pl-7`}
             />
           </div>

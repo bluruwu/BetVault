@@ -26,8 +26,7 @@ export const betCreateSchema = z.object({
 
     stake: z.number().gt(0, "Stake must be > 0"),
     status: z.enum(["PENDING", "WON", "LOST", "VOID"]),
-    created_at: z.iso.datetime({ offset: true }).optional(),
-
+    created_at: z.string().optional()
 });
 
 export type BetCreateFormValues = z.output<typeof betCreateSchema>
