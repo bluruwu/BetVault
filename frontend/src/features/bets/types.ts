@@ -16,7 +16,7 @@ export interface BetBase {
     home_team: string;
     away_team: string;
     market_type: MarketType;
-    target_scope: TargetScope; // default MATCH en backend
+    target_scope: TargetScope; // default MATCH in backend
     selection: string;
     selection_details: string | null;
     odds: number;

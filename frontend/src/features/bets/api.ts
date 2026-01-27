@@ -4,7 +4,7 @@ import type {BetOut} from "./types.ts";
 
 export async function createBet(payload: BetCreateFormValues): Promise<BetOut[]> {
   const { data } = await api.post<BetOut[]>("/bets", payload);
-  return data; // luego si quieres lo validamos con un betOutSchema
+  return data;
 }
 
 export async function getBets(): Promise<BetOut[]>{
