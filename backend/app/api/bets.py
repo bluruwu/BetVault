@@ -8,7 +8,7 @@ from app.db.session import get_db
 from app.models.bet import Bet, BetStatus
 from app.schemas.bet import BetCreate, BetOut
 from app.utils.utils import serialize_bet
-from app.api.deps import get_current_user_id
+from app.core.security.auth import get_current_user_id
 
 router = APIRouter(prefix="/bets", tags=["bets"])
 

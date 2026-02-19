@@ -1,5 +1,5 @@
-import {createContext, useContext, useEffect, useState, ReactNode} from "react";
-import {Session, User} from "@supabase/supabase-js";
+import {createContext, useContext, useEffect, useState, type ReactNode} from "react";
+import type {Session, User} from "@supabase/supabase-js";
 import {supabase} from "../lib/supabase.ts";
 
 type AuthContextType = {
@@ -46,6 +46,7 @@ export function AuthProvider({children}: {children: ReactNode}){
     );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth= () => {
     const context = useContext(AuthContext);
     if (context == undefined){
