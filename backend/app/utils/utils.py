@@ -3,6 +3,7 @@ from app.models.bet import Bet
 def serialize_bet(bet: Bet):
     return {
         "id": bet.id,
+        "user_id": bet.user_id,
         "home_team": bet.home_team,
         "away_team": bet.away_team,
         "market_type": bet.market_type,

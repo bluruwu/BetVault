@@ -1,9 +1,12 @@
-from sqlalchemy import String, DateTime, Numeric, Enum
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy import String, DateTime, Numeric, Enum, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
+from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
 from decimal import Decimal
+from app.models.user import User
 import enum
+import uuid
 #Import Base Class
 from app.db.base import Base
 
@@ -36,6 +39,13 @@ class Bet(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("auth.users.id"),
+        nullable=False,
+        index=True,
+    )
+    user: Mapped["User"] = relationship("User")
     #Team fields
     home_team: Mapped[str] = mapped_column(String(80))
     away_team: Mapped[str] = mapped_column(String(80))

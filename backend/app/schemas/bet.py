@@ -1,5 +1,5 @@
 from decimal import Decimal
-
+import uuid
 from pydantic import BaseModel, Field
 from app.models.bet import MarketType, BetStatus, TargetScope
 from datetime import datetime, timezone
@@ -21,6 +21,7 @@ class BetCreate(BetBase):
 
 class BetOut(BetBase):
     id: int
+    user_id: uuid.UUID
     status: BetStatus
     potential_payout: Decimal = Field(gt=0)
     net_profit: Decimal | None = None
