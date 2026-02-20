@@ -40,3 +40,13 @@ class BetUpdate(BaseModel):
     line: Decimal | None = None
     stake: Decimal | None = Field(None, gt=0)
     status: BetStatus | None = None
+
+class BetStatsOut(BaseModel):
+    total_bets: int
+    total_won: int
+    total_lost: int
+    total_pending: int
+    win_rate: Decimal
+    roi: Decimal
+    total_profit: Decimal
+    current_streak: int

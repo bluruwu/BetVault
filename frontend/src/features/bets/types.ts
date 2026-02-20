@@ -24,12 +24,6 @@ export interface BetBase {
     stake: number;
 }
 
-export interface BetCreate extends Omit<BetBase, "target_scope"> {
-    target_scope?: TargetScope;
-    status?: BetStatus;
-    created_at?: string;
-}
-
 export interface BetOut extends BetBase {
     id: number;
     status: BetStatus;
@@ -37,4 +31,19 @@ export interface BetOut extends BetBase {
     net_profit: number | null;
     created_at: string;
     updated_at: string;
+}
+
+export type BetUpdate = Partial<BetBase> & {
+    status?: BetStatus;
+};
+
+export interface BetStatsOut {
+    total_bets: number;
+    total_won: number;
+    total_lost: number;
+    total_pending: number;
+    win_rate: number;
+    roi: number;
+    total_profit: number;
+    current_streak: number;
 }
