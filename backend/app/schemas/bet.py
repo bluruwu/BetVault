@@ -27,5 +27,16 @@ class BetOut(BetBase):
     net_profit: Decimal | None = None
     created_at: datetime
     updated_at: datetime
-
     model_config = {"from_attributes": True}
+
+class BetUpdate(BaseModel):
+    home_team: str | None = Field(None, min_length=1, max_length=80)
+    away_team: str | None = Field(None, min_length=1, max_length=80)
+    market_type: MarketType | None = None
+    target_scope: TargetScope | None = None
+    selection: str | None = Field(None, min_length=1, max_length=120)
+    selection_details: str | None = None
+    odds: Decimal | None = Field(None, gt=1.0)
+    line: Decimal | None = None
+    stake: Decimal | None = Field(None, gt=0)
+    status: BetStatus | None = None
