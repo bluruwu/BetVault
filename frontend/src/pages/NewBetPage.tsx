@@ -1,8 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import BetForm from "../features/bets/BetForm";
-import type { BetCreateFormValues } from "../features/bets/betCreateSchema";
-import { createBet } from "../features/bets/api";
+import BetForm from "../features/bets/components/BetForm";
+import type { BetCreateFormValues } from "../features/bets/types/betCreateSchema";
+import { createBet } from "../features/bets/api/api";
 
 function getApiErrorMessage(err: unknown) {
   if (typeof err === "object" && err !== null && "message" in err) {

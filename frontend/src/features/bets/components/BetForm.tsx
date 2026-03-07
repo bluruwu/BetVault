@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { betCreateSchema, type BetCreateFormValues } from "./betCreateSchema.ts";
+import { betCreateSchema, type BetCreateFormValues } from "../types/betCreateSchema.ts";
 
 type Props = {
   onSubmit: (values: BetCreateFormValues) => void;
