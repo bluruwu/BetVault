@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getBets } from "../features/bets/api";
-import BetCard from "../features/bets/BetCard";
+import { getBets } from "../features/bets/api/api";
+import BetCard from "../features/bets/components/BetCard";
+import BetStats from "../features/bets/components/BetStats";
 
 export default function BetsListPage() {
   const { data: bets, isLoading, isError, error } = useQuery({
@@ -37,6 +38,8 @@ export default function BetsListPage() {
               Track your performance and history.
             </p>
           </div>
+
+          <BetStats />
 
           <Link
             to="/bets/new"
