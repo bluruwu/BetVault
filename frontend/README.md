@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# ✨ BetVault Frontend (React + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The **BetVault Frontend** is a modern, responsive, and performance-oriented web dashboard for managing betting performance. It prioritizes user experience with instant loading and seamless data synchronization.
 
-Currently, two official plugins are available:
+## 🛠️ Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19**: Leveraging the latest React features for efficient UI rendering.
+- **Vite**: Ultra-fast build tool and development server.
+- **TailwindCSS**: Utility-first CSS framework for custom, premium UI components.
+- **TanStack Query V5 (React Query)**: Advanced state and cache management.
+- **Persistence Layer**: LocalStorage-backed caching for an "instant-on" experience (no skeletons on page reloads).
+- **React Hook Form + Zod**: Type-safe form management and validation.
 
-## React Compiler
+## 📁 Architecture Overview
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+frontend/
+├── src/
+│   ├── app/            # Query client & global configuration
+│   ├── features/       # Feature-based organization (Bets, Stats)
+│   ├── pages/          # Full-page components & routing
+│   ├── routes/         # Application routing logic
+│   ├── utils/          # Shared utilities (Formatting, API)
+│   └── main.tsx        # Entry point
+└── index.html          # HTML template
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🚀 Key Implementation Details
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### ⚡ Professional Loading States
+Instead of generic spinners, BetVault use **Skeleton UI** components that match the actual card layout. This reduces visual "jumping" and improves perceived performance.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 🔄 Auto-Sync Architecture
+We use a **Cache Invalidation** strategy. When a new bet is created or updated, the system automatically invalidates the related queries (`["bets"]`, `["bet-stats"]`). This ensures the UI is always perfectly in sync with the backend without manual refreshes.
+
+### 💾 Persistence Strategy
+By using the `@tanstack/query-async-storage-persister`, the application saves its internal state to the browser's `LocalStorage`. This means that even after a full page refresh (F5), the dashboard displays the last known data instantly while it fetches fresh updates in the background.
+
+## 🏁 Setup & Installation
+
+### 1. Environment Configuration
+Create a `.env` file in the `frontend/` directory:
+```env
+VITE_API_URL="http://localhost:8000"
 ```
+
+### 2. Dependency Installation
+```bash
+npm install
+```
+
+### 3. Local Development
+```bash
+npm run dev
+```
+
+---
+Built with a focus on UI excellence and state-of-the-art performance.
