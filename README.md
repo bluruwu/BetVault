@@ -46,5 +46,9 @@ For detailed instructions on setting up each component, please refer to their re
 - [Frontend Documentation](frontend/README.md)
 - [Backend Documentation](backend/README.md)
 
+## 📜 License
+
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
 ---
-Developed as a professional personal project for data-driven betting performance.
+Developed by **[@Bluruwu](https://github.com/Bluruwu)**.
