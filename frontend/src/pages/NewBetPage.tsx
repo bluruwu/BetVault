@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import BetForm from "../features/bets/components/BetForm";
 import type { BetCreateFormValues } from "../features/bets/types/betCreateSchema";
 import { createBet } from "../features/bets/api/api";
+import { queryClient } from "../app/queryClient";
 
 function getApiErrorMessage(err: unknown) {
   if (typeof err === "object" && err !== null && "message" in err) {
@@ -40,6 +41,9 @@ export default function NewBetPage() {
       return createBet(payload);
     },
     onSuccess: () => {
+      // Invalidate queries to ensure list and stats are fresh
+      queryClient.invalidateQueries({ queryKey: ["bets"] });
+      queryClient.invalidateQueries({ queryKey: ["bet-stats"] });
       navigate("/bets");
     },
   });
