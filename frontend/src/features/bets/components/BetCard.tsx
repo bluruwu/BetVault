@@ -1,5 +1,8 @@
 import type { BetOut, BetStatus } from "../types/types.ts";
 import { formatDate } from "../../../utils/date.ts";
+import { useMutation } from "@tanstack/react-query";
+import { updateBet } from "../api/api.ts";
+import { queryClient } from "../../../app/queryClient.ts";
 
 const statusColors: Record<BetStatus, string> = {
   PENDING: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
@@ -13,6 +16,20 @@ interface Props {
 }
 
 export default function BetCard({ bet }: Props) {
+
+  const { mutate: updateStatus, isPending: isUpdating } = useMutation({
+    mutationFn: ({ id, status }: { id: number, status: BetStatus }) =>
+      updateBet(id, { status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bets"] });
+      queryClient.invalidateQueries({ queryKey: ["bet-stats"] });
+    },
+  });
+
+  const handleUpdateStatus = (newStatus: BetStatus) => {
+    updateStatus({ id: bet.id, status: newStatus });
+  };
+
   const isPending = bet.status === "PENDING";
 
   return (
@@ -86,6 +103,39 @@ export default function BetCard({ bet }: Props) {
           </span>
         </div>
       </div>
+      {/* Status Update Buttons */}
+      {isPending && (
+        <div className="grid grid-cols-3 border-t border-gray-700 bg-gray-800/50">
+          <button
+            onClick={() => handleUpdateStatus("WON")}
+            disabled={isUpdating}
+            className="p-3 text-center border-r border-gray-700 hover:bg-emerald-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+          >
+            <span className="block text-xs text-gray-500 uppercase group-hover/btn:text-emerald-400 transition-colors">
+              {isUpdating ? "..." : "✅ Won"}
+            </span>
+          </button>
+          <button
+            onClick={() => handleUpdateStatus("LOST")}
+            disabled={isUpdating}
+            className="p-3 text-center border-r border-gray-700 hover:bg-red-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+          >
+            <span className="block text-xs text-gray-500 uppercase group-hover/btn:text-red-400 transition-colors">
+              {isUpdating ? "..." : "❌ Lost"}
+            </span>
+          </button>
+          <button
+            onClick={() => handleUpdateStatus("VOID")}
+            disabled={isUpdating}
+            className="p-3 text-center hover:bg-gray-500/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed group/btn"
+          >
+            <span className="block text-xs text-gray-500 uppercase group-hover/btn:text-gray-300 transition-colors">
+              {isUpdating ? "..." : "🚫 Void"}
+            </span>
+          </button>
+        </div>
+      )}
+
     </div>
   );
 }
