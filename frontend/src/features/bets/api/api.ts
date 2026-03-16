@@ -21,3 +21,7 @@ export async function getBetStats(): Promise<BetStatsOut> {
   const { data } = await api.get<BetStatsOut>("/bets/stats");
   return data;
 }
+
+export async function deleteBet(id: number): Promise<void> {
+  await api.delete(`/bets/${id}`);
+}
