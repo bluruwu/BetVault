@@ -1,14 +1,23 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getBets } from "../features/bets/api/api";
 import BetCard from "../features/bets/components/BetCard";
 import BetStats from "../features/bets/components/BetStats";
+import type { BetStatus } from "../features/bets/types/types";
+
+type FilterOption = "ALL" | BetStatus;
 
 export default function BetsListPage() {
+  const [activeFilter, setActiveFilter] = useState<FilterOption>("ALL");
   const { data: bets, isLoading, isError, error } = useQuery({
     queryKey: ["bets"],
     queryFn: getBets,
   });
+
+  const filteredBets = bets?.filter(
+    (bet) => activeFilter === "ALL" || bet.status === activeFilter
+  );
 
   if (isError) {
     return (
@@ -17,6 +26,14 @@ export default function BetsListPage() {
       </div>
     );
   }
+
+  const filters: { label: string, value: FilterOption }[] = [
+    { label: "All 📊", value: "ALL" },
+    { label: "Pending ⏳", value: "PENDING" },
+    { label: "Won ✅", value: "WON" },
+    { label: "Lost ❌", value: "LOST" },
+    { label: "Void 🚫", value: "VOID" },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-900 p-4 sm:p-6 lg:p-8">
@@ -40,6 +57,24 @@ export default function BetsListPage() {
             + New Bet
           </Link>
         </div>
+
+        {/* Filters */}
+        {!isLoading && bets && bets.length > 0 && (
+          <div className="flex gap-2 overflow-x-auto pb-4 mb-4 scrollbar-hide">
+            {filters.map((f) => (
+              <button
+                key={f.value}
+                onClick={() => setActiveFilter(f.value)}
+                className={`whitespace-nowrap px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeFilter === f.value
+                    ? "bg-emerald-600 text-white shadow-md shadow-emerald-900/20"
+                    : "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white border border-gray-700"
+                  }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Loading State Skeleton */}
         {isLoading ? (
@@ -75,22 +110,26 @@ export default function BetsListPage() {
           </div>
         ) : (
           <>
-            {/* Empty State */}
-            {bets?.length === 0 && (
+            {filteredBets?.length === 0 ? (
               <div className="text-center py-20 bg-gray-800 rounded-xl border border-gray-700 border-dashed">
-                <p className="text-gray-400 mb-4">No bets recorded yet.</p>
-                <Link to="/bets/new" className="text-emerald-400 hover:underline">
-                  Create your first bet &rarr;
-                </Link>
+                <p className="text-gray-400 mb-4">
+                  {bets?.length === 0
+                    ? "You don't have any bets recorded yet."
+                    : "No bets match your current filter."}
+                </p>
+                {bets?.length === 0 && (
+                  <Link to="/bets/new" className="text-emerald-400 hover:underline">
+                    Create your first bet &rarr;
+                  </Link>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredBets?.map((bet) => (
+                  <BetCard key={bet.id} bet={bet} />
+                ))}
               </div>
             )}
-
-            {/* Bets Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {bets?.map((bet) => (
-                <BetCard key={bet.id} bet={bet} />
-              ))}
-            </div>
           </>
         )}
       </div>
