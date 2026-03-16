@@ -1,5 +1,5 @@
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from decimal import Decimal, ROUND_HALF_UP
@@ -139,3 +139,17 @@ def update_bet(
     db.commit()
     db.refresh(bet)
     return serialize_bet(bet)
+
+@router.delete("/{bet_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_bet(
+        bet_id: int,
+        db: Session = Depends(get_db),
+        current_user_id: str = Depends(get_current_user_id)
+):
+    search = select(Bet).where(Bet.id == bet_id, Bet.user_id == uuid.UUID(current_user_id))
+    bet = db.scalars(search).first()
+    if not bet:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Bet not found")
+    db.delete(bet)
+    db.commit()
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
