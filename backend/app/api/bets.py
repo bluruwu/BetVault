@@ -5,7 +5,7 @@ from sqlalchemy import select
 from decimal import Decimal, ROUND_HALF_UP
 
 from app.db.session import get_db
-from app.models.bet import Bet, BetStatus
+from app.models.bet import Bet, BetStatus, MarketType
 from app.schemas.bet import BetCreate, BetOut, BetUpdate, BetStatsOut
 from app.utils.utils import serialize_bet
 from app.core.security.auth import get_current_user_id
@@ -35,6 +35,12 @@ def create_bet(
         db: Session = Depends(get_db),
         current_user_id: str = Depends(get_current_user_id)
 ):
+    # Validation: Match Result must not have a line
+    if payload.market_type == MarketType.MATCH_RESULT and payload.line is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Match Result bets cannot  have a line value (received: {payload.line})"
+        )
 
     payout, profit = calculate_payout_and_profit(payload.stake, payload.odds, payload.status)
     bet = Bet(
@@ -131,6 +137,16 @@ def update_bet(
     if not bet:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Bet not found")
     update_data = payload.model_dump(exclude_unset=True)
+
+    # Validation: If updating to Match Result, line must be None (or if updating line on Match Result)
+    new_market = update_data.get("market_type", bet.market_type)
+    new_line = update_data.get("line", bet.line)
+    if new_market == MarketType.MATCH_RESULT and new_line is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Match Result bets cannot have a line value"
+        )
+
     for key, value in update_data.items():
         setattr(bet, key, value)
     payout, profit = calculate_payout_and_profit(bet.stake, bet.odds, bet.status)

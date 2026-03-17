@@ -1,4 +1,5 @@
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { betCreateSchema, type BetCreateFormValues } from "../types/betCreateSchema.ts";
 
@@ -10,7 +11,7 @@ type Props = {
 
 // Reusable styles
 const inputClasses =
-  "block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400 focus:border-emerald-500 focus:ring-emerald-500 transition-colors";
+  "block w-full rounded-lg border border-gray-600 bg-gray-700 p-2.5 text-sm text-white placeholder-gray-400 focus:border-emerald-500 focus:ring-emerald-500 transition-colors disabled:bg-gray-800 disabled:border-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed";
 const labelClasses = "mb-2 block text-sm font-medium text-gray-300";
 const errorClasses = "mt-1 text-xs text-red-400";
 const selectClasses = inputClasses;
@@ -27,6 +28,8 @@ export default function BetForm({
   const {
     register,
     handleSubmit,
+    control,
+    setValue,
     formState: { errors },
   } = useForm<BetCreateFormValues>({
     resolver: zodResolver(betCreateSchema),
@@ -35,10 +38,47 @@ export default function BetForm({
       target_scope: "MATCH",
       market_type: "MATCH_RESULT",
       line: null,
+      selection: "Match",
       selection_details: null,
       odds: 1.0,
     },
   });
+
+  const marketType = useWatch({ control, name: "market_type" });
+  const targetScope = useWatch({ control, name: "target_scope" });
+
+  const isThresholdMarket = [
+    "HANDICAP",
+    "GOALS",
+    "CORNERS",
+    "CARDS",
+    "PLAYER_SHOTS",
+    "PLAYER_SHOTS_TARGET",
+    "PLAYER_GOALS",
+  ].includes(marketType);
+
+  useEffect(() => {
+    if (marketType === "MATCH_RESULT") {
+      setValue("selection", "Match");
+      setValue("line", null);
+    } else if (marketType === "HANDICAP") {
+      if (targetScope === "MATCH") {
+        setValue("target_scope", "HOME_TEAM");
+      }
+    } else if (
+      [
+        "PLAYER_SHOTS",
+        "PLAYER_SHOTS_TARGET",
+        "PLAYER_GOALS",
+      ].includes(marketType)
+    ) {
+      setValue("target_scope", "MATCH");
+    }
+
+    if (isThresholdMarket) {
+      setValue("selection", "OVER");
+    }
+  }, [marketType, setValue, targetScope, isThresholdMarket]);
 
   return (
     <form
@@ -99,8 +139,20 @@ export default function BetForm({
 
         <div>
           <label className={labelClasses}>Target Scope</label>
-          <select {...register("target_scope")} className={selectClasses}>
-            <option value="MATCH">Match</option>
+          <select
+            {...register("target_scope")}
+            className={selectClasses}
+            disabled={[
+              "PLAYER_SHOTS",
+              "PLAYER_SHOTS_TARGET",
+              "PLAYER_GOALS",
+            ].includes(marketType)}
+          >
+            {marketType !== "HANDICAP" && (
+              <option value="MATCH">
+                {marketType === "MATCH_RESULT" ? "Draw" : "Match"}
+              </option>
+            )}
             <option value="HOME_TEAM">Home Team</option>
             <option value="AWAY_TEAM">Away Team</option>
           </select>
@@ -110,17 +162,49 @@ export default function BetForm({
         </div>
       </div>
 
-      {/* SECTION: SELECTION */}
+      {/* SECTION: SELECTION & LINE */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="md:col-span-1">
-          <label className={labelClasses}>Selection</label>
-          <input
-            {...register("selection")}
-            placeholder="Ex: Over 2.5 Goals / Home Win"
-            className={inputClasses}
-          />
-          {errors.selection && (
-            <p className={errorClasses}>{errors.selection.message}</p>
+          <label className={labelClasses}>Selection & Line</label>
+          <div className="flex gap-2">
+            <div className="flex-1">
+              {isThresholdMarket ? (
+                <select
+                  {...register("selection")}
+                  className={selectClasses}
+                >
+                  <option value="OVER">Over</option>
+                  <option value="UNDER">Under</option>
+                  <option value="YES">Yes</option>
+                  <option value="NO">No</option>
+                </select>
+              ) : (
+                <input
+                  {...register("selection")}
+                  placeholder="Ex: Home Win"
+                  className={inputClasses}
+                  disabled={marketType === "MATCH_RESULT"}
+                />
+              )}
+            </div>
+            <div className="w-1/3">
+              <input
+                type="number"
+                step="0.5"
+                min="0"
+                {...register("line", {
+                  setValueAs: (v) => (v === "" || v === null ? null : Number(v)),
+                })}
+                placeholder="0.5"
+                className={inputClasses}
+                disabled={marketType === "MATCH_RESULT"}
+              />
+            </div>
+          </div>
+          {(errors.selection || errors.line) && (
+            <p className={errorClasses}>
+              {errors.selection?.message || errors.line?.message}
+            </p>
           )}
         </div>
 
@@ -141,26 +225,8 @@ export default function BetForm({
         </div>
       </div>
 
-      {/* SECTION: NUMERICAL VALUES */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        {/* Line: Steps of 0.5, no negatives */}
-        <div>
-          <label className={labelClasses}>
-            Line <span className="text-gray-500 text-xs">(Step 0.5)</span>
-          </label>
-          <input
-            type="number"
-            step="0.5"
-            min="0"
-            {...register("line", {
-              setValueAs: (v) => (v === "" ? null : Number(v)),
-            })}
-            placeholder="0.5, 1.0, 1.5"
-            className={inputClasses}
-          />
-          {errors.line && <p className={errorClasses}>{errors.line.message}</p>}
-        </div>
-
+      {/* SECTION: ODDS & STAKE */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         {/* Odds: Starts at 1.00, no negatives */}
         <div>
           <label className={labelClasses}>Odds</label>
